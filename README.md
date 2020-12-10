@@ -9,4 +9,4 @@
 
 #### Steps taken through this project:
 - Did some reading on FastAPI document and also the document on [SQL (Relational) Database](https://fastapi.tiangolo.com/tutorial/sql-databases/) where we can use any relational database that you want and adapt it to your database using SQLAlchemy
-- Did my codes with the reference of the documents mentioned above and with the help of my previous internship project's codes, I was able to complete the logic functions required
+- Did my codes with the reference of the documents mentioned above and with the help of my previous internship project's codes, I was also able to complete the logic functions required
