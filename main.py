@@ -24,13 +24,13 @@ def get_db():
     finally: # this is to make sure exit steps are executed, no matter if there was an exception or not
         db.close() 
 
-# domains
-@projectapi.get("/scan/domain_ip/{id}", response_model=schemas.DomainIP, tags=["domains_ip"])
-def get_domain_or_ip(id: str, db: Session = Depends(get_db)): # declare with the type Session (imported directly from SQLAlchemy) and dependency 
-    db_domain_ip = crud.get_domain_ip(db, id=id) # get crud here
-    if db_domain_ip is None:    # logic function
+# get all information for domains and ip addresses
+@projectapi.get("/scan/domain_ip/{id}/all_information", response_model=schemas.DomainIP, tags=["all_information_for_domain_or_ip"])
+def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db)): # declare with the type Session (imported directly from SQLAlchemy) and dependency 
+    db_all_information_for_domain_or_ip = crud.get_all_domainipinfo(db, id=id) # get crud here
+    # return db_domain_ip
+    if db_all_information_for_domain_or_ip is None:    # logic function
         print("Please wait...")
-        print ("Please execute again to see the results...")
         regex = str("([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}") # for domain, it is a regex to differentiate domains and IP addresses
         if re.match(regex, id) is not None: # if input (x) and the regex match, it will run the domain section
             # domain_scans
@@ -303,11 +303,19 @@ def get_domain_or_ip(id: str, db: Session = Depends(get_db)): # declare with the
         # close the connection
         conn.close()
 
-        db_domain_ip = crud.get_domain_ip(db, id=id)
-        return db_domain_ip
+        db_all_information_for_domain_or_ip= crud.get_all_domainipinfo(db, id=id)
+        return db_all_information_for_domain_or_ip
 
     else:
-        return db_domain_ip
+        return db_all_information_for_domain_or_ip
+
+# domains and ip
+@projectapi.get("/scan/domain_ip/{id}", response_model=schemas.DomainIP, tags=["domains_ip"])
+def get_domain_or_ip(id: str, db: Session = Depends(get_db)): # declare with the type Session (imported directly from SQLAlchemy) and dependency 
+    db_domain_or_ip = crud.get_domain_ip(db, id=id) # get crud here
+    if db_domain_or_ip is None:
+        raise HTTPException(status_code=404, detail="Domain/IP not found")
+    return db_domain_or_ip
 
 # communicating files for domains and ip addresses
 @projectapi.get("/scan/domain_ip/{id}/communicating_files", response_model=List[schemas.CommunicatingFiles], tags=["communicating_files"])
@@ -320,12 +328,6 @@ def get_communicating_files(id: str, skip: int = 0, limit: int = 100, db: Sessio
 def get_referring_files(id: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_referring = crud.get_referring(db, id=id) # get crud here
     return db_referring
-
-# get all information for domains and ip addresses
-@projectapi.get("/scan/domain_ip/{id}/all_information", response_model=List[schemas.DomainIP_Comms_Referr], tags=["all_information_for_domain_or_ip"])
-def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db)):
-    db_all_information_for_domain_or_ip = crud.get_all_domainipinfo(db, id=id) # get crud here
-    return db_all_information_for_domain_or_ip
 
 # files
 @projectapi.get("/scan/files/{file_id}", response_model=schemas.File, tags=["files"])
@@ -375,20 +377,6 @@ def get_files(file_id: str, db: Session = Depends(get_db)):
 
         file_tags_obj = str(file_tags)[1:-1]
         file_records = (file_id, file_type, file_score, file_severity, file_tags_obj, dateFile)
-
-        # gets the number of rows affected by the command executed
-        # check if the row(s) exist or not
-        cur.execute(
-            "SELECT * FROM file_scans WHERE file_id = %s", 
-            (file_id,)
-        )
-        row_count = cur.rowcount
-        print ("Number of affected rows: {}".format(row_count))
-        if row_count == 0:
-            print ("Data does not exist")
-            print ("Please execute again to see the results...")
-        else:
-            print(file_records)
 
         # prepared statements for file_scans
         cur.execute(
