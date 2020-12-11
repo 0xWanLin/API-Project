@@ -442,7 +442,7 @@ def get_all_information_for_file(file_id: str, db: Session = Depends(get_db)):
 # files
 @projectapi.get("/scan/files/{file_id}", response_model=schemas.FileDetails, tags=["files"])
 def get_file(file_id: str, db: Session = Depends(get_db)): # declare with the type Session (imported directly from SQLAlchemy) and dependency 
-    db_file = crud.get_file(db, file_id=id) # get crud here
+    db_file = crud.get_file(db, file_id=file_id) # get crud here
     if db_file is None:
         raise HTTPException(status_code=404, detail="File not found")
     return db_file
