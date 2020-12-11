@@ -310,7 +310,7 @@ def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db))
         return db_all_information_for_domain_or_ip
 
 # domains and ip
-@projectapi.get("/scan/domain_ip/{id}", response_model=schemas.DomainIP, tags=["domains_ip"])
+@projectapi.get("/scan/domain_ip/{id}", response_model=schemas.DomainIPDetails, tags=["domains_ip"])
 def get_domain_or_ip(id: str, db: Session = Depends(get_db)): # declare with the type Session (imported directly from SQLAlchemy) and dependency 
     db_domain_or_ip = crud.get_domain_ip(db, id=id) # get crud here
     if db_domain_or_ip is None:
@@ -330,10 +330,10 @@ def get_referring_files(id: str, skip: int = 0, limit: int = 100, db: Session = 
     return db_referring
 
 # files
-@projectapi.get("/scan/files/{file_id}", response_model=schemas.File, tags=["files"])
-def get_files(file_id: str, db: Session = Depends(get_db)):
-    db_files = crud.get_file(db, file_id=file_id) # get crud here
-    if db_files is None:    # logic function
+@projectapi.get("/scan/files/{file_id}/all_information", response_model=schemas.File, tags=["all_information_for_file"])
+def get_all_information_for_file(file_id: str, db: Session = Depends(get_db)): 
+    db_all_information_for_file = crud.get_all_file_info(db, file_id=file_id) # get crud here
+    if db_all_information_for_file is None:    # logic function
         print("Please wait...")
         # file_scans
         url = 'https://www.virustotal.com/api/v3/files/' + file_id
@@ -433,11 +433,19 @@ def get_files(file_id: str, db: Session = Depends(get_db)):
         # close the connection
         conn.close()
 
-        db_files = crud.get_file(db, file_id=file_id)
-        return db_files
+        db_all_information_for_file = crud.get_all_file_info(db, file_id=file_id)
+        return db_all_information_for_file
 
     else: 
-        return db_files
+        return db_all_information_for_file
+
+# files
+@projectapi.get("/scan/files/{file_id}", response_model=schemas.FileDetails, tags=["files"])
+def get_file(file_id: str, db: Session = Depends(get_db)): # declare with the type Session (imported directly from SQLAlchemy) and dependency 
+    db_file = crud.get_file(db, file_id=id) # get crud here
+    if db_file is None:
+        raise HTTPException(status_code=404, detail="Domain/IP not found")
+    return db_file
 
 # execution parents for files
 @projectapi.get("/scan/files/{file_id}/execution_parents", response_model=List[schemas.ExecutionParents], tags=["execution_parents"])
@@ -445,11 +453,6 @@ def get_execution_parents(file_id: str, skip: int = 0, limit: int = 100, db: Ses
     db_execution = crud.get_execution(db, file_id=file_id) # get crud here
     return db_execution
 
-# get all information for files
-@projectapi.get("/scan/files/{file_id}/all_information", response_model=List[schemas.FileExec], tags=["all_information_for_file"])
-def get_all_information_for_file(file_id: str, db: Session = Depends(get_db)):
-    db_all_information_for_file = crud.get_all_file_info(db, file_id=file_id) # get crud here
-    return db_all_information_for_file
 
 
 # file with execution_parents: 43239bce0a3200c5d61d968f8e130dbaa3bf987e02417d49191c72bbf1636d4e, b0f476d3f63bf6c0294baa40e1e1a18933a0ee787b6077675b6073c1c1a7b7a4, 92ba324f390c6a09feaf42d88591c7481fe432ed9a58822efebda0a7bca170db

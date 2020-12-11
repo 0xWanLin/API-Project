@@ -12,8 +12,8 @@ class DomainIP(Base):
     severity = Column(VARCHAR)
     date = Column (DateTime)
 
-    communicating_files = relationship("CommunicatingFiles", back_populates="domain_ip") # relationships: contain values from other tables related to this a.k.a foreign key
-    referring_files = relationship("ReferringFiles", back_populates="domain_ip") # relationships: contain values from other tables related to this
+    communicating_files = relationship("CommunicatingFiles") # relationships: contain values from other tables related to this a.k.a foreign key
+    referring_files = relationship("ReferringFiles") # relationships: contain values from other tables related to this
 
 class CommunicatingFiles(Base):
     __tablename__ = "communicating_files"
@@ -26,8 +26,6 @@ class CommunicatingFiles(Base):
     type = Column(VARCHAR)
     name = Column(Text)
     
-    domain_ip = relationship("DomainIP", back_populates="communicating_files") # relationships: contain values from other tables related to this
-    
 class ReferringFiles(Base):
     __tablename__ = "referring_files"
 
@@ -39,8 +37,6 @@ class ReferringFiles(Base):
     type = Column(VARCHAR)
     name = Column(Text)
 
-    domain_ip = relationship("DomainIP", back_populates="referring_files") # relationships: contain values from other tables related to this
-
 class File(Base):
     __tablename__ = "file_scans"
 
@@ -51,7 +47,7 @@ class File(Base):
     tags = Column(VARCHAR)
     date = Column (VARCHAR)
 
-    exec_parents = relationship("ExecutionParents", back_populates="file_items") # relationships: contain values from other tables related to this
+    exec_parents = relationship("ExecutionParents") # relationships: contain values from other tables related to this
 
 class ExecutionParents(Base):
     __tablename__ = "execution_parents"
@@ -63,6 +59,4 @@ class ExecutionParents(Base):
     severity = Column(VARCHAR)
     type = Column(VARCHAR)
     name = Column(Text)
-
-    file_items = relationship("File", back_populates="exec_parents") # relationships: contain values from other tables related to this
     

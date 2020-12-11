@@ -37,18 +37,18 @@ class DomainIPBase(BaseModel):
     date: datetime
 
 class DomainIP(DomainIPBase): # to fetch only the data for values shown in this class
+    communicating_files: List[CommunicatingFiles] = [] # get the attributes from Communicating Files into a List
+    referring_files: List[ReferringFiles] = [] # get the attributes from Referring Files into a List
+    
+    class Config:
+        orm_mode = True
+
+class DomainIPDetails(DomainIPBase):
     id: str
     type: str
     score: str
     severity: str
     date: datetime
-    
-    class Config:
-        orm_mode = True
-
-class DomainIP_Comms_Referr(DomainIPBase): # to fetch data from DomainIPBase and the values shown in this class which are Communicating Files and Referring Files
-    communicating_files: List[CommunicatingFiles] = [] # get the attributes from Communicating Files into a List
-    referring_files: List[ReferringFiles] = [] # get the attributes from Referring Files into a List
 
     class Config:
         orm_mode = True
@@ -74,18 +74,18 @@ class FileBase(BaseModel):
     date: datetime
 
 class File(FileBase): # to fetch only the data for values shown in this class
+    exec_parents: List[ExecutionParents] = [] # get the attributes from Execution Parents into a List
+
+    class Config:
+        orm_mode = True
+
+class FileDetails(FileBase):
     file_id: str
     type: str
     score: str
     severity: str
     tags: str
     date: datetime
-
-    class Config:
-        orm_mode = True
-
-class FileExec(FileBase): # to fetch data from FileBase and the values shown in this class which is Execution Parents
-    exec_parents: List[ExecutionParents] = [] # get the attributes from Execution Parents into a List
 
     class Config:
         orm_mode = True

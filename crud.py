@@ -12,7 +12,7 @@ def get_referring(db: Session, id: str, skip: int = 0, limit: int = 100):  # rea
     return db.query(models.ReferringFiles).filter(models.ReferringFiles.id == id).all()
 
 def get_all_domainipinfo(db: Session, id: str):  # read all infos by domain id or ip id
-    return db.query(models.DomainIP).filter(models.DomainIP.id == id).all()
+    return db.query(models.DomainIP).filter(models.DomainIP.id == id).first()
 
 def get_file(db: Session, file_id: str): # read file details by file_id
     return db.query(models.File).filter(models.File.file_id == file_id).first()
@@ -21,4 +21,4 @@ def get_execution(db: Session, file_id: str, skip: int = 0, limit: int = 100): #
     return db.query(models.ExecutionParents).filter(models.ExecutionParents.file_id == file_id).all()
 
 def get_all_file_info(db: Session, file_id: str): # read all infos by file id
-    return db.query(models.File).filter(models.File.file_id == file_id).all()
+    return db.query(models.File).filter(models.File.file_id == file_id).first()
