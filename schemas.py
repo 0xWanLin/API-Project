@@ -29,7 +29,7 @@ class ReferringFiles(BaseModel):
     class Config:
         orm_mode = True
 
-class DomainIPBase(BaseModel):
+class DomainIPBase(BaseModel): 
     id: str
     type: str
     score: str
@@ -43,7 +43,7 @@ class DomainIP(DomainIPBase): # to fetch only the data for values shown in this 
     class Config:
         orm_mode = True
 
-class DomainIPDetails(DomainIPBase):
+class DomainIPDetails(DomainIPBase): # to fetch only domain/ip details
     id: str
     type: str
     score: str
@@ -79,7 +79,7 @@ class File(FileBase): # to fetch only the data for values shown in this class
     class Config:
         orm_mode = True
 
-class FileDetails(FileBase):
+class FileDetails(FileBase): # to fetch only file details
     file_id: str
     type: str
     score: str
