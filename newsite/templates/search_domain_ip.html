@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block title %}<title>API Project</title>{% endblock %}
+    <style>
+    table, th, td {
+        border: 1px solid black;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .search {
+      float: right;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    </style>
+</head>
+<body>
+    <h1>Search Results For Domain/IP</h1>
+    <a href="/">Back to Homepage</a>
+    <br>
+    <table>
+        <tr>
+        <h3>Domain/IP Details</h3>
+        <th>ID (Domain/IP)</th>
+        <th>Type</th>
+        <th>Score</th>
+        <th>Severity</th>
+        <th>Date</th>
+        </tr>
+        <tr>
+        {% for result in domainipinfo %}
+        <td>{{ result }}</td>
+        {% endfor %}
+        </tr>
+    </table>
+    
+    <br>
+    <table>
+        <tr>
+        <h3>Communicating Files</h3>
+        <th>Communicating ID</th>
+        <th>ID (Domain/IP)</th>
+        <th>Date Scanned</th>
+        <th>Detection Score</th>
+        <th>Severity</th>
+        <th>Type</th>
+        <th>Name</th>
+        </tr>
+        <tr>
+        {% for result in communicating_files %}
+        <td>{{ result.communicating_id }}</td>
+        <td>{{ result.id }}</td>
+        <td>{{ result.date_scanned }}</td>
+        <td>{{ result.detection_score }}</td>
+        <td>{{ result.severity }}</td>
+        <td>{{ result.type }}</td>
+        <td>{{ result.name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <table>
+        <tr>
+        <h3>Referring Files</h3>
+        <th>Referring ID</th>
+        <th>ID (Domain/IP)</th>
+        <th>Date Scanned</th>
+        <th>Detection Score</th>
+        <th>Severity</th>
+        <th>Type</th>
+        <th>Name</th>
+        </tr>
+        <tr>
+        {% for result in referring_files %}
+        <td>{{ result.referring_id }}</td>
+        <td>{{ result.id }}</td>
+        <td>{{ result.date_scanned }}</td>
+        <td>{{ result.detection_score }}</td>
+        <td>{{ result.severity }}</td>
+        <td>{{ result.type }}</td>
+        <td>{{ result.name }}</td>
+    </tr>
+    {% endfor %}
+    </table>
+</body>
+</html>

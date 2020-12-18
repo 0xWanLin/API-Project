@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block title %}<title>API Project</title>{% endblock %}
+    <style>
+    table, th, td {
+        border: 1px solid black;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .search {
+      float: right;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    </style>
+</head>
+<body>
+    <h1>Search Results For File</h1>
+    <a href="/">Back to Homepage</a>
+    <br>
+    <table>
+        <tr>
+        <h3>File Details</h3>
+        <th>File ID</th>
+        <th>Type</th>
+        <th>Score</th>
+        <th>Severity</th>
+        <th>Tags</th>
+        <th>Date</th>
+        </tr>
+        <tr>
+        {% for info in fileinfo %}
+        <td>{{ info }}</td>
+        {% endfor %}
+        </tr>
+    </table>
+    <br>
+    <table>
+        <tr>
+        <h3>Execution Parents</h3>
+        <th>Execution ID</th>
+        <th>File ID</th>
+        <th>Date Scanned</th>
+        <th>Detection Score</th>
+        <th>Severity</th>
+        <th>Type</th>
+        <th>Name</th>
+        </tr>
+        <tr>
+        {% for info in execution_parents %}
+        <td>{{ info.execution_id }}</td>
+        <td>{{ info.file_id }}</td>
+        <td>{{ info.date_scanned }}</td>
+        <td>{{ info.detection_score }}</td>
+        <td>{{ info.severity }}</td>
+        <td>{{ info.type }}</td>
+        <td>{{ info.name }}</td>
+    </tr>
+    {% endfor %}
+    </table>
+</body>
+</html>

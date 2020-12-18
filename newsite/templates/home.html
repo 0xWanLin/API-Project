@@ -1,0 +1,11 @@
+<h1>API Project</h1>
+
+<form action="{% url 'search' %}" method="get">
+    <input name="q" type="text" placeholder="Search for Domain or IP">
+    <button type="submit">Submit</button>
+</form>
+
+<form action="{% url 'search_file' %}" method="get">
+    <input name="file" type="text" placeholder="Search for File">
+    <button type="submit">Submit</button>
+</form>
