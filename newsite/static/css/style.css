@@ -1,0 +1,137 @@
+.search {
+  float: right;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.searchbar {
+    margin-top:20px;
+    margin-left:20px;
+}
+.align {
+    margin-top:65px;
+    margin-left:20px;
+}
+.align1 {
+    margin-top:22px;
+    margin-left:20px;
+}
+.align2 {
+    margin-top:10px;
+    margin-left:20px;
+    margin-right:20px;
+}
+.align3 {
+    margin-top:25px;
+    margin-left:20px;
+    margin-right:20px;
+}
+.align4 {
+    margin-top:90px;
+    margin-left:20px;
+    margin-right:20px;
+}
+.wrapper {
+    overflow-y: scroll;
+    height: 300px;
+}
+.button {
+    background-color: #343a40; /* Black */
+    border: none;
+    color: white;
+    padding: 5px 30px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 15px;
+}
+.styled-table {
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 0.9em;
+    min-width: 1000px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+.styled-table thead {
+    background-color: #343a40;
+    color: #ffffff;
+    text-align: left;
+    font-weight: bold;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 7px;
+}
+.styled-table td, .styled-table th {
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 7px;
+}
+.styled-table tbody tr:last-of-type {
+    border-bottom: 2px solid #343a40;
+}
+/* table css for those longer list results */
+.styled-tables {
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 0.9em;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    table-layout: fixed;
+    width: 100%;
+}
+.styled-tables th {
+    background-color: #343a40;
+    color: #ffffff;
+    text-align: left;
+    font-weight: bold;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 7px;
+    position: sticky;
+    top: 0;
+}
+.styled-tables td, .styled-tables th {
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 7px;
+}
+
+.styled-tables tbody tr:last-of-type {
+    border-bottom: 2px solid #343a40;
+}
+
+.row1 {
+    width: 35%;
+}
+.row2 {
+    width: 7%;
+}
+.row3 {
+    width: 10%;
+}
+.row4 {
+    width: 7%;
+}
+.row5 {
+    width: 7%;
+}
+.row6 {
+    width: 7%;
+}
+.row7 {
+    width: 45%;
+}
+/* extra edits for file tables */
+.rowid {
+    width: 35%;
+}
+.rowfileid{
+    width: 35%;
+}
+.rowfilename {
+    width: 30%;
+}
+.rowscore{
+    width: 6%;
+}
+.rowseverity{
+    width: 5%;
+}
