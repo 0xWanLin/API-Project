@@ -1,11 +1,98 @@
-<h1>API Project</h1>
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+    {% block title %}<title>API Search Application</title>{% endblock %}
+    <style>
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="/">API Search Application<span class="sr-only">(current)</span></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+                aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-<form action="{% url 'search' %}" method="get">
-    <input name="q" type="text" placeholder="Search for Domain or IP">
-    <button type="submit">Submit</button>
-</form>
-
-<form action="{% url 'search_file' %}" method="get">
-    <input name="file" type="text" placeholder="Search for File">
-    <button type="submit">Submit</button>
-</form>
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link">Domain/IP</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"> File</a>
+                </li>
+            </ul>
+        </div> 
+    </nav>
+    <h3 class="align4">Searched Domains/IP Addresses</h3>
+    <div class="align2">
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>ID (Domain/IP)</th>
+                    <th>Type</th>
+                    <th>Score</th>
+                    <th>Severity</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                {% for r in domainip_query %}
+                <td><a href="search_domain_ip/?q={{ r.id }}">{{ r.id }}</a></td>
+                <td>{{ r.type }}</td>
+                <td>{{ r.score }}</td>
+                <td>{{ r.severity }}</td>
+                <td>{{ r.date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <h5 class="align3">Search for more Domain/IP</h5>
+    <div class="searchbar">
+        <form action="{% url 'search' %}" method="get">
+            <input name="q" type="text" placeholder="Search for Domain or IP">
+            <button class="button" type="submit">Submit</button>
+        </form>
+    </div>
+    <h3 class="align3">Searched Files</h3>
+    <div class="align2">   
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>File ID</th>
+                    <th>Type</th>
+                    <th>Score</th>
+                    <th>Severity</th>
+                    <th>Date</th>
+                    <th>Tags</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                {% for r in file_query %}
+                <td><a href="search_file/?file={{ r.file_id }}">{{ r.file_id }}</a></td>
+                <td>{{ r.type }}</td>
+                <td>{{ r.score }}</td>
+                <td>{{ r.severity }}</td>
+                <td>{{ r.date }}</td>
+                <td>{{ r.tags }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <h5 class="align3">Search for more Files</h5>
+    <div class="searchbar">
+        <form action="{% url 'search_file' %}" method="get">
+            <input name="file" type="text" placeholder="Search for File">
+            <button class="button" type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>
