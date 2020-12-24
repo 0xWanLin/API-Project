@@ -12,4 +12,4 @@
 #### Ongoing Tasks:
 -  Use Django template to make front-end look nicer
 -  Use sqlmap to scan our website to check for vulnerabilities such as SQL Injection
--  Send our supervisor a picture about the result of sqlmap scan on telegram or email
+-  Send our supervisor a picture about the result of sqlmap scan
