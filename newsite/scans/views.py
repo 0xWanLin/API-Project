@@ -4,12 +4,16 @@ from .models import DomainIpScan, CommunicatingFile, ReferringFile, FileScan, Ex
 import psycopg2
 from psycopg2.extras import execute_values
 import re
-import json, urllib.request, requests
+import json
+import requests
 
 # Create your views here.
 
 def home(request):
-    return render(request, 'home.html')
+    domainip_query = DomainIpScan.objects.all()
+    file_query = FileScan.objects.all()
+
+    return render(request, 'home.html', {'domainip_query': domainip_query, 'file_query': file_query})
 
 def search(request):
     query = request.GET.get('q')
@@ -43,14 +47,14 @@ def search_file(request):
     type = file_dict["type"]
     score = file_dict["score"]
     severity = file_dict["severity"]
-    tags = file_dict["tags"]
     date = file_dict["date"]
-    fileinfo = (file_id, type, score, severity, tags, date)
+    tags = file_dict["tags"]
+    fileinfo = (file_id, type, score, severity, date, tags)
 
     exec_parents = file_dict["exec_parents"]
     
     return render(request, 'search_file.html', {'fileinfo': fileinfo, 'execution_parents': exec_parents})
 
 
-# file with execution_parents: 43239bce0a3200c5d61d968f8e130dbaa3bf987e02417d49191c72bbf1636d4e, b0f476d3f63bf6c0294baa40e1e1a18933a0ee787b6077675b6073c1c1a7b7a4, 92ba324f390c6a09feaf42d88591c7481fe432ed9a58822efebda0a7bca170db
+# file with execution_parents: 6210d10145358e05ea5e2852277a393c51a8dde8308f003e101a6efe7df84479, 43239bce0a3200c5d61d968f8e130dbaa3bf987e02417d49191c72bbf1636d4e (already in the db), b0f476d3f63bf6c0294baa40e1e1a18933a0ee787b6077675b6073c1c1a7b7a4, 92ba324f390c6a09feaf42d88591c7481fe432ed9a58822efebda0a7bca170db
 # cd56643dc3a657ad83b8edbe9f607a572643db0d7ea7376bb86b569c38f82cee

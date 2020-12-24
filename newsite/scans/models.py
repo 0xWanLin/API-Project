@@ -5,7 +5,7 @@ from django.db import models
 class CommunicatingFile(models.Model):
     communicating_id = models.CharField(primary_key=True, max_length=255)
     id = models.ForeignKey('DomainIpScan', on_delete=models.CASCADE, db_column='id', related_name='comms')
-    date_scanned = models.DateTimeField()
+    date_scanned = models.DateTimeField(auto_now_add = True)
     detection_score = models.CharField(max_length=10)
     severity = models.CharField(max_length=10)
     type = models.CharField(max_length=10)
@@ -22,7 +22,7 @@ class CommunicatingFile(models.Model):
 class ReferringFile(models.Model):
     referring_id = models.CharField(primary_key=True, max_length=255)
     id = models.ForeignKey('DomainIpScan', on_delete=models.CASCADE, db_column='id', related_name='referr')
-    date_scanned = models.DateTimeField()
+    date_scanned = models.DateTimeField(auto_now_add = True)
     detection_score = models.CharField(max_length=10)
     severity = models.CharField(max_length=10)
     type = models.CharField(max_length=10)
@@ -41,7 +41,7 @@ class DomainIpScan(models.Model):
     type = models.CharField(max_length=10)
     score = models.CharField(max_length=10)
     severity = models.CharField(max_length=10)
-    date = models.DateTimeField()
+    date = models.DateTimeField(auto_now_add = True)
 
     class Meta:
         managed = False
@@ -73,8 +73,8 @@ class FileScan(models.Model):
     type = models.CharField(max_length=10)
     score = models.CharField(max_length=10)
     severity = models.CharField(max_length=10)
-    tags = models.CharField(max_length=255)
     date = models.DateTimeField()
+    tags = models.CharField(max_length=255)
 
     class Meta:
         managed = False
