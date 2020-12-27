@@ -8,8 +8,8 @@
 - Applied FastAPI with [Django](https://www.djangoproject.com/)
 - Made a frontend page that have a search box; with a button to execute
 - Displayed the results on the frontend in tables
+-  Used Django Suit on Django admin, CSS and Bootstrap to make my website's front-end look nicer
+-  Used sqlmap to scan my website to check for vulnerabilities such as SQL Injection
 
 #### Ongoing Tasks:
--  Use Django template to make front-end look nicer
--  Use sqlmap to scan our website to check for vulnerabilities such as SQL Injection
--  Send our supervisor a picture about the result of sqlmap scan
+
