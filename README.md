@@ -9,7 +9,8 @@
 - Made a frontend page that have a search box; with a button to execute
 - Displayed the results on the frontend in tables
 -  Used Django Suit on Django admin, CSS and Bootstrap to make my website's front-end look nicer
--  Used sqlmap to scan my website to check for vulnerabilities such as SQL Injection
 
 #### Ongoing Tasks:
+-  Used sqlmap to scan my website to check for vulnerabilities such as SQL Injection
+
 
