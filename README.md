@@ -15,7 +15,7 @@
 - Update our front-end page based on the draft given by supervisor in Telegram
 - Customize the Admin page:
   - Add a search bar
-  - Add a filter?
+  - Add a filter
   - Add a button in the admin page that redirect to the search page
 
 
