@@ -1,5 +1,6 @@
 from typing import Optional, List
 from datetime import datetime, time, timedelta
+import pytz
 import psycopg2
 import re
 import json, urllib.request, requests
@@ -25,7 +26,7 @@ def get_db():
         db.close() 
 
 # get all information for domains and ip addresses
-@projectapi.get("/scan/domain_ip/{id}/all_information", response_model=schemas.DomainIP, tags=["all_information_for_domain_or_ip"])
+@projectapi.get("/scan/domain_ip/{id}", response_model=schemas.DomainIP, tags=["all_information_for_domain_or_ip"])
 def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db)): # declare with the type Session (imported directly from SQLAlchemy) and dependency 
     db_all_information_for_domain_or_ip = crud.get_all_domainipinfo(db, id=id) # get crud here
     # return db_domain_ip
@@ -39,12 +40,12 @@ def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db))
             response_dict = json.loads(response.text)
 
             # communicating_files
-            url = 'https://www.virustotal.com/api/v3/domains/' + id + '/communicating_files'
+            url = 'https://www.virustotal.com/api/v3/domains/' + id + '/communicating_files?limit=40'
             response = requests.get(url, headers={'x-apikey': '7eee67229628b5e21b740b91926cadb65c606a672365363b50a578073ea65f5f'})
             response_communicating_dict = json.loads(response.text)
 
             # referring_files
-            url = 'https://www.virustotal.com/api/v3/domains/' + id + '/referrer_files'
+            url = 'https://www.virustotal.com/api/v3/domains/' + id + '/referrer_files?limit=40'
             response = requests.get(url, headers={'x-apikey': '7eee67229628b5e21b740b91926cadb65c606a672365363b50a578073ea65f5f'})
             response_referring_dict = json.loads(response.text)
 
@@ -60,14 +61,17 @@ def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db))
             # domain_scans
             # getting data from the dictionary list saved with the json data
             domain_id = response_dict['data']['id']
-            domain_date = response_dict['data']['attributes']['whois_date']
+            # domain_date = response_dict['data']['attributes']['whois_date']
+            timezone_sg =  pytz.timezone('Asia/Singapore')
+            datetime_sg = datetime.now(timezone_sg)
+            domain_date = datetime_sg.strftime('%Y-%m-%d %H:%M:%S')
             domain_type = response_dict['data']['type']
             domain_harmless_score = response_dict['data']['attributes']['last_analysis_stats']['harmless']
             domain_malicious_score = response_dict['data']['attributes']['last_analysis_stats']['malicious']
             domain_suspicious_score = response_dict['data']['attributes']['last_analysis_stats']['suspicious']
             domain_timeout_score = response_dict['data']['attributes']['last_analysis_stats']['timeout']
             domain_undetected_score = response_dict['data']['attributes']['last_analysis_stats']['undetected']
-            domainDate = datetime.fromtimestamp(domain_date).strftime('%Y-%m-%d %I:%M:%S')
+            # domainDate = datetime.fromtimestamp(domain_date).strftime('%Y-%m-%d %I:%M:%S')
             domain_score = str(domain_malicious_score + domain_suspicious_score) + "/" + str(domain_harmless_score + domain_malicious_score + domain_suspicious_score + domain_timeout_score + domain_undetected_score)
 
             if domain_malicious_score + domain_suspicious_score >= 25:
@@ -79,7 +83,7 @@ def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db))
             else:
                 domain_severity = "Low"
 
-            domain_records = (domain_id, domain_type, domain_score, domain_severity, domainDate)
+            domain_records = (domain_id, domain_type, domain_score, domain_severity, domain_date)
 
             # prepared statement for domain_ip_scans
             cur.execute(
@@ -94,7 +98,8 @@ def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db))
             x = 0
             while x != len(response_communicating_dict['data']):
                 communicating_id = response_communicating_dict['data'][x]['id']
-                communicating_date = response_communicating_dict['data'][x]['attributes']['last_submission_date']
+                date_time = datetime_sg.strftime('%Y-%m-%d %H:%M:%S')
+                # communicating_date = response_communicating_dict['data'][x]['attributes']['last_submission_date']
                 communicating_harmless_score = response_communicating_dict['data'][x]['attributes']['last_analysis_stats']['harmless']
                 communicating_malicious_score = response_communicating_dict['data'][x]['attributes']['last_analysis_stats']['malicious']
                 communicating_suspicious_score = response_communicating_dict['data'][x]['attributes']['last_analysis_stats']['suspicious']
@@ -102,7 +107,7 @@ def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db))
                 communicating_undetected_score = response_communicating_dict['data'][x]['attributes']['last_analysis_stats']['undetected']
                 communicating_type = response_communicating_dict['data'][x]['attributes']['type_description']
                 communicating_name = response_communicating_dict['data'][x]['attributes']['names']
-                date_time = datetime.fromtimestamp(communicating_date).strftime('%Y-%m-%d %I:%M:%S')
+                # date_time = datetime.fromtimestamp(communicating_date).strftime('%Y-%m-%d %I:%M:%S')
                 communicating_score = str(communicating_malicious_score + communicating_suspicious_score) + "/" + str(communicating_harmless_score + communicating_malicious_score + communicating_suspicious_score + communicating_timeout_score + communicating_undetected_score)
                 communicating_name_obj = str(communicating_name)[1:-1]
 
@@ -119,7 +124,7 @@ def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db))
                 communicating_records = (communicating_id, domain_id, date_time, communicating_score, communicating_severity, communicating_type, communicating_name_obj)
                 cur.execute(
                     "PREPARE communicating_request AS "
-                    "INSERT INTO communicating_files VALUES ($1, $2, $3, $4, $5, $6, $7)")
+                    "INSERT INTO communicating_files VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT DO NOTHING")
                 cur.execute("EXECUTE communicating_request (%s, %s, %s, %s, %s, %s, %s)", communicating_records)
                 cur.execute("DEALLOCATE communicating_request")
                 conn.commit()
@@ -131,7 +136,8 @@ def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db))
             x = 0
             while x != len(response_referring_dict['data']):
                 referring_id = response_communicating_dict['data'][x]['id']
-                referring_date = response_referring_dict['data'][x]['attributes']['last_submission_date']
+                date_time = datetime_sg.strftime('%Y-%m-%d %H:%M:%S')
+                # referring_date = response_referring_dict['data'][x]['attributes']['last_submission_date']
                 referring_harmless_score = response_referring_dict['data'][x]['attributes']['last_analysis_stats']['harmless']
                 referring_malicious_score = response_referring_dict['data'][x]['attributes']['last_analysis_stats']['malicious']
                 referring_suspicious_score = response_referring_dict['data'][x]['attributes']['last_analysis_stats']['suspicious']
@@ -139,7 +145,7 @@ def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db))
                 referring_undetected_score = response_referring_dict['data'][x]['attributes']['last_analysis_stats']['undetected']
                 referring_type = response_referring_dict['data'][x]['attributes']['type_description']
                 referring_name = response_referring_dict['data'][x]['attributes']['names']
-                date_time = datetime.fromtimestamp(referring_date).strftime('%Y-%m-%d %I:%M:%S')
+                # date_time = datetime.fromtimestamp(referring_date).strftime('%Y-%m-%d %I:%M:%S')
                 referring_score = str(referring_malicious_score + referring_suspicious_score) + "/" + str(referring_harmless_score + referring_malicious_score + referring_suspicious_score + referring_timeout_score + referring_undetected_score)
                 referring_name_obj = str(referring_name)[1:-1]
 
@@ -156,7 +162,7 @@ def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db))
                 referring_records = (referring_id, domain_id, date_time, referring_score, referring_severity, referring_type, referring_name_obj)
                 cur.execute(
                     "PREPARE referring_request AS "
-                    "INSERT INTO referring_files VALUES ($1, $2, $3, $4, $5, $6, $7)"
+                    "INSERT INTO referring_files VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT DO NOTHING"
                 )
                 cur.execute("EXECUTE referring_request (%s, %s, %s, %s, %s, %s, %s)", (referring_records))
                 cur.execute("DEALLOCATE referring_request")
@@ -171,12 +177,12 @@ def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db))
             response_ip_dict = json.loads(response.text)
 
             # communicating_files
-            url = 'https://www.virustotal.com/api/v3/ip_addresses/' + id + '/communicating_files'
+            url = 'https://www.virustotal.com/api/v3/ip_addresses/' + id + '/communicating_files?limit=40'
             response = requests.get(url, headers={'x-apikey': '7eee67229628b5e21b740b91926cadb65c606a672365363b50a578073ea65f5f'})
             response_ipcomms_dict = json.loads(response.text)
 
             # referring_files
-            url = 'https://www.virustotal.com/api/v3/ip_addresses/' + id + '/referrer_files'
+            url = 'https://www.virustotal.com/api/v3/ip_addresses/' + id + '/referrer_files?limit=40'
             response = requests.get(url, headers={'x-apikey': '7eee67229628b5e21b740b91926cadb65c606a672365363b50a578073ea65f5f'})
             response_ipreferring_dict = json.loads(response.text)
 
@@ -192,14 +198,17 @@ def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db))
             # ip_scans
             # getting data from the dictionary list saved with the json data
             ip_id = response_ip_dict['data']['id']
-            ip_date = response_ip_dict['data']['attributes']['whois_date']
+            timezone_sg =  pytz.timezone('Asia/Singapore')
+            datetime_sg = datetime.now(timezone_sg)
+            ip_date = datetime_sg.strftime('%Y-%m-%d %H:%M:%S')
+            # ip_date = response_ip_dict['data']['attributes']['whois_date']
             ip_type = response_ip_dict['data']['type']
             ip_harmless_score = response_ip_dict['data']['attributes']['last_analysis_stats']['harmless']
             ip_malicious_score = response_ip_dict['data']['attributes']['last_analysis_stats']['malicious']
             ip_suspicious_score = response_ip_dict['data']['attributes']['last_analysis_stats']['suspicious']
             ip_timeout_score = response_ip_dict['data']['attributes']['last_analysis_stats']['timeout']
             ip_undetected_score = response_ip_dict['data']['attributes']['last_analysis_stats']['undetected']
-            ipDate = datetime.fromtimestamp(ip_date).strftime('%Y-%m-%d %I:%M:%S')
+            # ipDate = datetime.fromtimestamp(ip_date).strftime('%Y-%m-%d %I:%M:%S')
             ip_score = str(ip_malicious_score + ip_suspicious_score) + "/" + str(ip_harmless_score + ip_malicious_score + ip_suspicious_score + ip_timeout_score + ip_undetected_score)
 
             if ip_malicious_score + ip_suspicious_score >= 25:
@@ -211,7 +220,7 @@ def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db))
             else:
                 ip_severity = "Low"
 
-            ip_records = (ip_id, ip_type, ip_score, ip_severity, ipDate)
+            ip_records = (ip_id, ip_type, ip_score, ip_severity, ip_date)
             
             # prepared statements for domain_ip_scans
             cur.execute(
@@ -227,7 +236,8 @@ def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db))
             x = 0
             while x != len(response_ipcomms_dict['data']):
                 ipcomms_id = response_ipcomms_dict['data'][x]['id']
-                ipcomms_date = response_ipcomms_dict['data'][x]['attributes']['last_submission_date']
+                date_time = datetime_sg.strftime('%Y-%m-%d %H:%M:%S')
+                # ipcomms_date = response_ipcomms_dict['data'][x]['attributes']['last_submission_date']
                 ipcomms_harmless_score = response_ipcomms_dict['data'][x]['attributes']['last_analysis_stats']['harmless']
                 ipcomms_malicious_score = response_ipcomms_dict['data'][x]['attributes']['last_analysis_stats']['malicious']
                 ipcomms_suspicious_score = response_ipcomms_dict['data'][x]['attributes']['last_analysis_stats']['suspicious']
@@ -235,7 +245,7 @@ def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db))
                 ipcomms_undetected_score = response_ipcomms_dict['data'][x]['attributes']['last_analysis_stats']['undetected']
                 ipcomms_type = response_ipcomms_dict['data'][x]['attributes']['type_description']
                 ipcomms_name = response_ipcomms_dict['data'][x]['attributes']['names']
-                date_time = datetime.fromtimestamp(ipcomms_date).strftime('%Y-%m-%d %I:%M:%S')
+                # date_time = datetime.fromtimestamp(ipcomms_date).strftime('%Y-%m-%d %I:%M:%S')
                 ipcomms_score = str(ipcomms_malicious_score + ipcomms_suspicious_score) + "/" + str(ipcomms_harmless_score + ipcomms_malicious_score + ipcomms_suspicious_score + ipcomms_timeout_score + ipcomms_undetected_score)
                 ipcomms_name_obj = str(ipcomms_name)[1:-1]
 
@@ -252,7 +262,7 @@ def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db))
                 ipcomms_records = (ipcomms_id, ip_id, date_time, ipcomms_score, ipcomms_severity, ipcomms_type, ipcomms_name_obj)
                 cur.execute(
                     "PREPARE ipcommunicating_request AS "
-                    "INSERT INTO communicating_files VALUES ($1, $2, $3, $4, $5, $6, $7)")
+                    "INSERT INTO communicating_files VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT DO NOTHING")
                 cur.execute("EXECUTE ipcommunicating_request (%s, %s, %s, %s, %s, %s, %s)", ipcomms_records)
                 cur.execute("DEALLOCATE ipcommunicating_request")
                 conn.commit()
@@ -264,7 +274,8 @@ def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db))
             x = 0
             while x != len(response_ipreferring_dict['data']):
                 ipreferring_id = response_ipreferring_dict['data'][x]['id']
-                ipreferring_date = response_ipreferring_dict['data'][x]['attributes']['last_submission_date']
+                date_time = datetime_sg.strftime('%Y-%m-%d %H:%M:%S')
+                # ipreferring_date = response_ipreferring_dict['data'][x]['attributes']['last_submission_date']
                 ipreferring_harmless_score = response_ipreferring_dict['data'][x]['attributes']['last_analysis_stats']['harmless']
                 ipreferring_malicious_score = response_ipreferring_dict['data'][x]['attributes']['last_analysis_stats']['malicious']
                 ipreferring_suspicious_score = response_ipreferring_dict['data'][x]['attributes']['last_analysis_stats']['suspicious']
@@ -272,7 +283,7 @@ def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db))
                 ipreferring_undetected_score = response_ipreferring_dict['data'][x]['attributes']['last_analysis_stats']['undetected']
                 ipreferring_type = response_ipreferring_dict['data'][x]['attributes']['type_description']
                 ipreferring_name = response_ipreferring_dict['data'][x]['attributes']['names']
-                date_time = datetime.fromtimestamp(ipreferring_date).strftime('%Y-%m-%d %I:%M:%S')
+                # date_time = datetime.fromtimestamp(ipreferring_date).strftime('%Y-%m-%d %I:%M:%S')
                 ipreferring_score = str(ipreferring_malicious_score + ipreferring_suspicious_score) + "/" + str(ipreferring_harmless_score + ipreferring_malicious_score + ipreferring_suspicious_score + ipreferring_timeout_score + ipreferring_undetected_score)
                 ipreferring_name_obj = str(ipreferring_name)[1:-1]
 
@@ -289,7 +300,7 @@ def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db))
                 ipreferring_records = (ipreferring_id, ip_id, date_time, ipreferring_score, ipreferring_severity, ipreferring_type, ipreferring_name_obj)
                 cur.execute(
                     "PREPARE ipreferring_request AS "
-                    "INSERT INTO referring_files VALUES ($1, $2, $3, $4, $5, $6, $7)"
+                    "INSERT INTO referring_files VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT DO NOTHING"
                 )
                 cur.execute("EXECUTE ipreferring_request (%s, %s, %s, %s, %s, %s, %s)", (ipreferring_records))
                 cur.execute("DEALLOCATE ipreferring_request")
@@ -310,7 +321,7 @@ def get_all_information_for_domain_or_ip(id: str, db: Session = Depends(get_db))
         return db_all_information_for_domain_or_ip
 
 # domains and ip
-@projectapi.get("/scan/domain_ip/{id}", response_model=schemas.DomainIPDetails, tags=["domains_ip"])
+@projectapi.get("/scan/domain_ip/{id}/details", response_model=schemas.DomainIPDetails, tags=["domains_ip"])
 def get_domain_or_ip(id: str, db: Session = Depends(get_db)): # declare with the type Session (imported directly from SQLAlchemy) and dependency 
     db_domain_or_ip = crud.get_domain_ip(db, id=id) # get crud here
     if db_domain_or_ip is None:
@@ -330,7 +341,7 @@ def get_referring_files(id: str, skip: int = 0, limit: int = 100, db: Session = 
     return db_referring
 
 # files
-@projectapi.get("/scan/files/{file_id}/all_information", response_model=schemas.File, tags=["all_information_for_file"])
+@projectapi.get("/scan/files/{file_id}", response_model=schemas.File, tags=["all_information_for_file"])
 def get_all_information_for_file(file_id: str, db: Session = Depends(get_db)): 
     db_all_information_for_file = crud.get_all_file_info(db, file_id=file_id) # get crud here
     if db_all_information_for_file is None:    # logic function
@@ -341,7 +352,7 @@ def get_all_information_for_file(file_id: str, db: Session = Depends(get_db)):
         response_file_dict = json.loads(response.text)
 
         # execution_parents
-        url = 'https://www.virustotal.com/api/v3/files/' + file_id + '/execution_parents'
+        url = 'https://www.virustotal.com/api/v3/files/' + file_id + '/execution_parents?limit=40'
         response = requests.get(url, headers={'x-apikey': '7eee67229628b5e21b740b91926cadb65c606a672365363b50a578073ea65f5f'})
 
         try:
@@ -355,7 +366,10 @@ def get_all_information_for_file(file_id: str, db: Session = Depends(get_db)):
 
         # file_scans
         file_id = response_file_dict['data']['id']
-        file_date = response_file_dict['data']['attributes']['last_submission_date']
+        tz_SG =  pytz.timezone('Asia/Singapore')
+        datetime_SG = datetime.now(tz_SG)
+        dateFile = datetime_SG.strftime('%Y-%m-%d %H:%M:%S')
+        # file_date = response_file_dict['data']['attributes']['last_submission_date']
         file_type = response_file_dict['data']['type']
         file_harmless_score = response_file_dict['data']['attributes']['last_analysis_stats']['harmless']
         file_malicious_score = response_file_dict['data']['attributes']['last_analysis_stats']['malicious']
@@ -363,7 +377,7 @@ def get_all_information_for_file(file_id: str, db: Session = Depends(get_db)):
         file_timeout_score = response_file_dict['data']['attributes']['last_analysis_stats']['timeout']
         file_undetected_score = response_file_dict['data']['attributes']['last_analysis_stats']['undetected']
         file_tags = response_file_dict['data']['attributes']['tags']
-        dateFile = datetime.fromtimestamp(file_date).strftime('%Y-%m-%d %I:%M:%S')
+        # dateFile = datetime.fromtimestamp(file_date).strftime('%Y-%m-%d %I:%M:%S')
         file_score = str(file_malicious_score + file_suspicious_score) + "/" + str(file_harmless_score + file_malicious_score + file_suspicious_score + file_timeout_score + file_undetected_score)
 
         if file_malicious_score + file_suspicious_score >= 25:
@@ -376,7 +390,7 @@ def get_all_information_for_file(file_id: str, db: Session = Depends(get_db)):
             file_severity = "Low"
 
         file_tags_obj = str(file_tags)[1:-1]
-        file_records = (file_id, file_type, file_score, file_severity, file_tags_obj, dateFile)
+        file_records = (file_id, file_type, file_score, file_severity, dateFile, file_tags_obj)
 
         # prepared statements for file_scans
         cur.execute(
@@ -395,14 +409,17 @@ def get_all_information_for_file(file_id: str, db: Session = Depends(get_db)):
                 for y in response_execution_dict['data'][x]['attributes']['names']:
                     execution_id = response_execution_dict['data'][x]['id']
                     execution_name = response_execution_dict['data'][x]['attributes']['names']
-                    execution_date = response_execution_dict['data'][x]['attributes']['last_submission_date']
+                    timezone_sg =  pytz.timezone('Asia/Singapore')
+                    datetime_sg = datetime.now(timezone_sg)
+                    date_time = datetime_sg.strftime('%Y-%m-%d %H:%M:%S')
+                    # execution_date = response_execution_dict['data'][x]['attributes']['last_submission_date']
                     execution_harmless_score = response_execution_dict['data'][x]['attributes']['last_analysis_stats']['harmless']
                     execution_malicious_score = response_execution_dict['data'][x]['attributes']['last_analysis_stats']['malicious']
                     execution_suspicious_score = response_execution_dict['data'][x]['attributes']['last_analysis_stats']['suspicious']
                     execution_timeout_score = response_execution_dict['data'][x]['attributes']['last_analysis_stats']['timeout']
                     execution_undetected_score = response_execution_dict['data'][x]['attributes']['last_analysis_stats']['undetected']
                     execution_type = response_execution_dict['data'][x]['attributes']['type_description']
-                    date_time = datetime.fromtimestamp(execution_date).strftime('%Y-%m-%d %I:%M:%S')
+                    # date_time = datetime.fromtimestamp(execution_date).strftime('%Y-%m-%d %I:%M:%S')
                     execution_score = str(execution_malicious_score + execution_suspicious_score) + "/" + str(execution_harmless_score + execution_malicious_score + execution_suspicious_score + execution_timeout_score + execution_undetected_score)
                     execution_name_obj = str(execution_name)[1:-1]
 
@@ -420,7 +437,7 @@ def get_all_information_for_file(file_id: str, db: Session = Depends(get_db)):
                     # prepared statements for execution_parents
                     cur.execute(
                         "PREPARE execution_request AS "
-                        "INSERT INTO execution_parents VALUES ($1, $2, $3, $4, $5, $6, $7)")
+                        "INSERT INTO execution_parents VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT DO NOTHING")
                     cur.execute("EXECUTE execution_request (%s, %s, %s, %s, %s, %s, %s)", (execution_records)) # %s for string
                     cur.execute("DEALLOCATE execution_request")
                     conn.commit()
@@ -440,7 +457,7 @@ def get_all_information_for_file(file_id: str, db: Session = Depends(get_db)):
         return db_all_information_for_file
 
 # files
-@projectapi.get("/scan/files/{file_id}", response_model=schemas.FileDetails, tags=["files"])
+@projectapi.get("/scan/files/{file_id}/details", response_model=schemas.FileDetails, tags=["files"])
 def get_file(file_id: str, db: Session = Depends(get_db)): # declare with the type Session (imported directly from SQLAlchemy) and dependency 
     db_file = crud.get_file(db, file_id=file_id) # get crud here
     if db_file is None:
