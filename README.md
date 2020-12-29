@@ -16,7 +16,7 @@
 - Customize the Admin page:
   - Add a search bar
   - Add a filter
-  - Add a button in the admin page that redirect to the search page
+  - Add a button in the admin page that redirect to the search page (my website)
 
 
 
