@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+    {% block title %}<title>API Search Application</title>{% endblock %}
+    <style>
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="/">API Search Application<span class="sr-only">(current)</span></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+                aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin" target="_blank">History</a>
+                </li>
+            </ul>
+        </div> 
+    </nav>
+    <br>
+    <div class="align">
+        <form action="{% url 'scans:search_file' %}" method="get">
+            <input name="file" type="text" placeholder="Search for File">
+            <button class="button" type="submit">Submit</button>
+        </form>
+    </div>
+    <div class="align1"><h2>Search Results For File</h2></div>
+    <h3 class="align3">File Details</h3>
+    <div class="align2">   
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>File ID</th>
+                    <th>Type</th>
+                    <th>Score</th>
+                    <th>Severity</th>
+                    <th>Date</th>
+                    <th>Tags</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                {% for info in fileinfo %}
+                <td>{{ info }}</td>
+                {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <h3 class="align3">Execution Parents</h3>
+    <div class="align2 wrapper">
+        <table class="styled-tables">
+            <thead>
+                <tr>
+                    <th class="rowid">Execution ID</th>
+                    <th class="rowfileid">File ID</th>
+                    <th class="row3">Date Scanned</th>
+                    <th class="rowscore">Detection Score</th>
+                    <th class="rowseverity">Severity</th>
+                    <th class="row6">Type</th>
+                    <th class="rowfilename">Name</th>
+                </tr>
+            </thead>
+        <tbody>
+            <tr>
+            {% for info in execution_parents %}
+            <td>{{ info.execution_id }}</td>
+            <td>{{ info.file_id }}</td>
+            <td>{{ info.date_scanned }}</td>
+            <td>{{ info.detection_score }}</td>
+            <td>{{ info.severity }}</td>
+            <td>{{ info.type }}</td>
+            <td>{{ info.name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
+</body>
+</html>
