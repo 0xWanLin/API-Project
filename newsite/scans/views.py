@@ -12,6 +12,14 @@ import requests
 def home(request):
     return render(request, 'scans/home.html')
 
+def domain_ip(request):
+    domainip_query = DomainIpScan.objects.all()
+    return render(request, 'scans/domain_ip.html', {'domainip_query': domainip_query})
+
+def files(request):
+    file_query = FileScan.objects.all()
+    return render(request, 'scans/file.html', {'file_query': file_query})
+
 def search(request):
     query = request.GET.get('q')
 
