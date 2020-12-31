@@ -18,6 +18,14 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'scans:domain_ip' %}">Searched Domain/IP</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'scans:files' %}">Searched Files</a>
+                </li>
+            </ul>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="/admin">History</a>
@@ -25,6 +33,7 @@
             </ul>
         </div> 
     </nav>
+    <!-- Tabs -->
     <div class="bar">
         <button class="bar-item buttontabs tablink blue border" onclick="openScans(event, 'Domain/IP')">Domain/IP</button>
         <button class="bar-item buttontabs tablink border" onclick="openScans(event, 'File')">File</button>

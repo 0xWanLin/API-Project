@@ -18,6 +18,14 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'scans:domain_ip' %}">Searched Domain/IP</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'scans:files' %}">Searched Files</a>
+                </li>
+            </ul>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="/admin">History</a>
@@ -29,7 +37,7 @@
     <div class="align">
         <form action="{% url 'scans:search' %}" method="get">
             <input name="q" type="text" placeholder="Search for Domain or IP">
-            <button class="button" type="submit">Submit</button>
+            <button class="button1" type="submit">Submit</button>
         </form>
     </div>
     <div class="align1"><h2>Search Results For Domain/IP</h2></div>
