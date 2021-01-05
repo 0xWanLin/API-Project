@@ -119,6 +119,16 @@
     padding-left: 7px;
 }
 
+.low {
+    background-color: rgb(190, 255, 185);
+  }
+.medium {
+    background-color: rgb(255, 255, 170);
+  }
+.high {
+    background-color: rgb(255, 200, 200);
+  }
+
 .styled-tables tbody tr:last-of-type {
     border-bottom: 2px solid #343a40;
 }
