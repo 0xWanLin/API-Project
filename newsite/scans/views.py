@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect
 from itertools import chain
 from .models import DomainIpScan, CommunicatingFile, ReferringFile, FileScan, ExecutionParent
 import psycopg2
@@ -38,8 +39,6 @@ def search(request):
     referring_files = domain_ip_dict["referring_files"]
     
     return render(request, 'scans/search_domain_ip.html', {'domainipinfo': domainipinfo, 'communicating_files': communicating_files, 'referring_files': referring_files})
-
-    
 
 def search_file(request):
     query = request.GET.get('file')

@@ -16,6 +16,15 @@ class DomainIP(admin.ModelAdmin):
             'show_save_and_continue': False,
         })
         return super().render_change_form(request, context, add, change, form_url, obj)
+    
+    def suit_cell_attributes(self, obj, column):
+        if column == 'severity':
+            if getattr(obj, "severity") == "Low":
+                return {'style': 'background-color: rgb(190, 255, 185);'}
+            elif getattr(obj, "severity") == "Medium":
+                return {'style': 'background-color: rgb(255, 255, 170);'}
+            elif getattr(obj, "severity") == "High":
+                return {'style': 'background-color: rgb(255, 200, 200);'}
 
 admin.site.register(DomainIpScan, DomainIP)
 
@@ -34,6 +43,15 @@ class CommunicatingAdmin(admin.ModelAdmin):
             'show_save_and_continue': False,
         })
         return super().render_change_form(request, context, add, change, form_url, obj)
+    
+    def suit_cell_attributes(self, obj, column):
+        if column == 'severity':
+            if getattr(obj, "severity") == "Low":
+                return {'style': 'background-color: rgb(190, 255, 185);'}
+            elif getattr(obj, "severity") == "Medium":
+                return {'style': 'background-color: rgb(255, 255, 170);'}
+            elif getattr(obj, "severity") == "High":
+                return {'style': 'background-color: rgb(255, 200, 200);'}
 
 admin.site.register(CommunicatingFile, CommunicatingAdmin)
 
@@ -52,6 +70,15 @@ class ReferringAdmin(admin.ModelAdmin):
             'show_save_and_continue': False,
         })
         return super().render_change_form(request, context, add, change, form_url, obj)
+
+    def suit_cell_attributes(self, obj, column):
+        if column == 'severity':
+            if getattr(obj, "severity") == "Low":
+                return {'style': 'background-color: rgb(190, 255, 185);'}
+            elif getattr(obj, "severity") == "Medium":
+                return {'style': 'background-color: rgb(255, 255, 170);'}
+            elif getattr(obj, "severity") == "High":
+                return {'style': 'background-color: rgb(255, 200, 200);'}
 
 admin.site.register(ReferringFile,ReferringAdmin)
 
@@ -72,6 +99,15 @@ class FileAdmin(admin.ModelAdmin):
         })
         return super().render_change_form(request, context, add, change, form_url, obj)
 
+    def suit_cell_attributes(self, obj, column):
+        if column == 'severity':
+            if getattr(obj, "severity") == "Low":
+                return {'style': 'background-color: rgb(190, 255, 185);'}
+            elif getattr(obj, "severity") == "Medium":
+                return {'style': 'background-color: rgb(255, 255, 170);'}
+            elif getattr(obj, "severity") == "High":
+                return {'style': 'background-color: rgb(255, 200, 200);'}
+
 admin.site.register(FileScan, FileAdmin)
 
 class ExecutionAdmin(admin.ModelAdmin):
@@ -89,6 +125,15 @@ class ExecutionAdmin(admin.ModelAdmin):
             'show_save_and_continue': False,
         })
         return super().render_change_form(request, context, add, change, form_url, obj)
+
+    def suit_cell_attributes(self, obj, column):
+        if column == 'severity':
+            if getattr(obj, "severity") == "Low":
+                return {'style': 'background-color: rgb(190, 255, 185);'}
+            elif getattr(obj, "severity") == "Medium":
+                return {'style': 'background-color: rgb(255, 255, 170);'}
+            elif getattr(obj, "severity") == "High":
+                return {'style': 'background-color: rgb(255, 200, 200);'}
 
 admin.site.register(ExecutionParent, ExecutionAdmin)
 
