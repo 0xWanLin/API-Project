@@ -17,4 +17,4 @@
 
 #### Ongoing Tasks:
 - Used sqlmap to scan my website to check for vulnerabilities such as SQL Injection
-- Some improvements on my website and admin page (severity color codes, etc)
+- Make some improvements on my website and admin page (severity color codes, etc)
