@@ -39,31 +39,45 @@
         <button class="bar-item buttontabs tablink border" onclick="openScans(event, 'File')">File</button>
     </div>
     <div class="searchbar container scans tabborder" id="Domain/IP">
-        <form action="{% url 'scans:search' %}" method="get">
+        <form action="{% url 'scans:search' %}" method="get" name="Form" onsubmit="return searchDomainIP()">
             <input name="q" type="text" placeholder="Search for Domain or IP">
             <button class="button" type="submit">Submit</button>
         </form>
     </div>
     <div class="searchbar container scans tabborder" id="File" style="display:none;">
-        <form action="{% url 'scans:search_file' %}" method="get">
-            <input name="file" type="text" placeholder="Search for File">
+        <form action="{% url 'scans:search_file' %}" method="get" name="FormFile" onsubmit="return searchFile()">
+            <input name="file" type="text" placeholder="Search for File Hash">
             <button class="button" type="submit">Submit</button>
         </form>
     </div>
     <script>
-        function openScans(evt, scanName) {
-            var i, x, tablinks;
-            x = document.getElementsByClassName("scans");
-            for (i = 0; i < x.length; i++) {
-            x[i].style.display = "none";  
-            }
-            tablinks = document.getElementsByClassName("tablink");
-            for (i = 0; i < x.length; i++) {
-                tablinks[i].className = tablinks[i].className.replace(" blue", "");
-            }
-            document.getElementById(scanName).style.display = "block";  
-            evt.currentTarget.className += " blue";
+    function openScans(evt, scanName) {
+        var i, x, tablinks;
+        x = document.getElementsByClassName("scans");
+        for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none";  
         }
+        tablinks = document.getElementsByClassName("tablink");
+        for (i = 0; i < x.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" blue", "");
+        }
+        document.getElementById(scanName).style.display = "block";  
+        evt.currentTarget.className += " blue";
+    }
+    function searchDomainIP(){
+        var DomainIP = document.forms["Form"]["q"].value;
+        if (DomainIP == null || DomainIP == "") {
+            alert("Please input a Domain Name or IP Address");
+            return false;
+        }
+    }
+    function searchFile(){
+        var File = document.forms["FormFile"]["file"].value;
+        if (File == null || File == "") {
+            alert("Please input a File Hash");
+            return false;
+        }
+    }
     </script>
 </body>
 </html>

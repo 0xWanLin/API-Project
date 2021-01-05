@@ -62,10 +62,19 @@
     </div>
     <h5 class="align3">Search for more Files</h5>
     <div class="align5">
-        <form action="{% url 'scans:search_file' %}" method="get">
-            <input name="file" type="text" placeholder="Search for File">
+        <form action="{% url 'scans:search_file' %}" method="get" name="FormFile" onsubmit="return searchFile()">
+            <input name="file" type="text" placeholder="Search for File Hash">
             <button class="button1" type="submit">Submit</button>
         </form>
     </div>
+    <script>
+    function searchFile(){
+        var File = document.forms["FormFile"]["file"].value;
+        if (File == null || File == "") {
+            alert("Please input a File Hash");
+            return false;
+        }
+    }
+    </script>
 </body>
 </html>

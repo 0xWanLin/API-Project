@@ -35,7 +35,7 @@
     </nav>
     <br>
     <div class="align">
-        <form action="{% url 'scans:search' %}" method="get">
+        <form action="{% url 'scans:search' %}" method="get" name="Form" onsubmit="return searchDomainIP()">
             <input name="q" type="text" placeholder="Search for Domain or IP">
             <button class="button1" type="submit">Submit</button>
         </form>
@@ -120,5 +120,14 @@
             </tbody>
         </table>
     </div>
+    <script>
+    function searchDomainIP(){
+        var DomainIP = document.forms["Form"]["q"].value;
+        if (DomainIP == null || DomainIP == "") {
+            alert("Please input a Domain Name or IP Address");
+            return false;
+        }
+    }
+    </script>
 </body>
 </html>
