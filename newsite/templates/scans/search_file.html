@@ -57,7 +57,7 @@
             <tbody>
                 <tr>
                 {% for info in fileinfo %}
-                <td>{{ info }}</td>
+                <td class="{% if info == 'Low' %}low{% endif %}{% if info == 'Medium' %}medium{% endif %}{% if info == 'High' %}high{% endif %}">{{ info }}</td>
                 {% endfor %}
                 </tr>
             </tbody>
@@ -84,7 +84,7 @@
             <td>{{ info.file_id }}</td>
             <td>{{ info.date_scanned }}</td>
             <td>{{ info.detection_score }}</td>
-            <td>{{ info.severity }}</td>
+            <td class="{% if info.severity == 'Low' %}low{% endif %}{% if info.severity == 'Medium' %}medium{% endif %}{% if info.severity == 'High' %}high{% endif %}">{{ info.severity }}</td>
             <td>{{ info.type }}</td>
             <td>{{ info.name }}</td>
             </tr>

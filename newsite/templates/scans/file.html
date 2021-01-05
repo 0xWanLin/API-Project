@@ -52,7 +52,7 @@
                 <td>{{ r.file_id }}</td>
                 <td>{{ r.type }}</td>
                 <td>{{ r.score }}</td>
-                <td>{{ r.severity }}</td>
+                <td class="{% if r.severity == 'Low' %}low{% endif %}{% if r.severity == 'Medium' %}medium{% endif %}{% if r.severity == 'High' %}high{% endif %}">{{ r.severity }}</td>
                 <td>{{ r.date }}</td>
                 <td>{{ r.tags }}</td>
                 </tr>

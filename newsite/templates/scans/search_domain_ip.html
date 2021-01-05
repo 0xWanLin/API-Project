@@ -56,7 +56,7 @@
             <tbody>
                 <tr>
                 {% for result in domainipinfo %}
-                <td>{{ result }}</td>
+                <td class="{% if result == 'Low' %}low{% endif %}{% if result == 'Medium' %}medium{% endif %}{% if result == 'High' %}high{% endif %}">{{ result }}</td>
                 {% endfor %}
                 </tr>
             </tbody>
@@ -83,7 +83,7 @@
                 <td>{{ result.id }}</td>
                 <td>{{ result.date_scanned }}</td>
                 <td>{{ result.detection_score }}</td>
-                <td>{{ result.severity }}</td>
+                <td class="{% if result.severity == 'Low' %}low{% endif %}{% if result.severity == 'Medium' %}medium{% endif %}{% if result.severity == 'High' %}high{% endif %}">{{ result.severity }}</td>
                 <td>{{ result.type }}</td>
                 <td>{{ result.name }}</td>
                 </tr>
@@ -112,7 +112,7 @@
                 <td>{{ result.id }}</td>
                 <td>{{ result.date_scanned }}</td>
                 <td>{{ result.detection_score }}</td>
-                <td>{{ result.severity }}</td>
+                <td class="{% if result.severity == 'Low' %}low{% endif %}{% if result.severity == 'Medium' %}medium{% endif %}{% if result.severity == 'High' %}high{% endif %}">{{ result.severity }}</td>
                 <td>{{ result.type }}</td>
                 <td>{{ result.name }}</td>
             </tr>
