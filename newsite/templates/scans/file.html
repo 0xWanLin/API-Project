@@ -49,7 +49,7 @@
             <tbody>
                 <tr>
                 {% for r in file_query %}
-                <td>{{ r.file_id }}</td>
+                <td><a href="/scans/search_file/?file={{ r.file_id }}">{{ r.file_id }}</a></td>
                 <td>{{ r.type }}</td>
                 <td>{{ r.score }}</td>
                 <td class="{% if r.severity == 'Low' %}low{% endif %}{% if r.severity == 'Medium' %}medium{% endif %}{% if r.severity == 'High' %}high{% endif %}">{{ r.severity }}</td>

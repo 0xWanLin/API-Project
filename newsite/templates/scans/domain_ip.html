@@ -48,7 +48,7 @@
             <tbody>
                 <tr>
                 {% for r in domainip_query %}
-                <td>{{ r.id }}</td>
+                <td><a href="/scans/search_domain_ip/?q={{ r.id }}">{{ r.id }}</a></td>
                 <td>{{ r.type }}</td>
                 <td>{{ r.score }}</td>
                 <td class="{% if r.severity == 'Low' %}low{% endif %}{% if r.severity == 'Medium' %}medium{% endif %}{% if r.severity == 'High' %}high{% endif %}">{{ r.severity }}</td>
