@@ -14,7 +14,7 @@
   - Add a search bar
   - Add a filter
   - Add a button in the admin page that redirect to the search page (my website)
+  - Made some improvements on my website and admin page (severity color codes, etc)
 
 #### Ongoing Tasks:
 - Used sqlmap to scan my website to check for vulnerabilities such as SQL Injection
-- Make some improvements on my website and admin page (severity color codes, etc)
