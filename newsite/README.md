@@ -4,7 +4,7 @@
 - Created an search page based on the link with Django and FastAPI
 - Designed and Customized Django Admin Page (to suit users)
 
-#### things to take note:
+#### Things to take note:
 - newsite folder = project root folder
 - scans folder = app name folder
 - static/css folder = where all the CSS files are
