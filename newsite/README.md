@@ -1,7 +1,7 @@
 # API-Project
 
 ### Implementation of Django on my website and the usage of Django Admin Page
-- Created an search page based on the link with Django and FastAPI
+- Created an search page after applying Django with FastAPI
 - Designed and Customized Django Admin Page (to suit users)
 
 #### Things to take note:
