@@ -1,10 +1,10 @@
 # API-Project
 
 ### Implementation of Django on my website and the usage of Django Admin Page (customizations)
-#### - Created an search page based on the link with Django and FastAPI
-#### - Designed and Customized Django Admin Page (to suit users)
+- Created an search page based on the link with Django and FastAPI
+- Designed and Customized Django Admin Page (to suit users)
 
-things to take note:
+#### things to take note:
 - newsite folder = project root folder
 - scans folder = app name folder
 - static/css folder = where all the CSS files are
